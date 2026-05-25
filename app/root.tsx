@@ -11,26 +11,27 @@ import {
     isRouteErrorResponse,
     type LoaderFunctionArgs,
 } from 'react-router';
+import i18n from '~/i18n';
 import env, { isDev } from '~/secure/env';
 import type { Route } from './+types/root';
 import { useTranslation } from 'react-i18next';
-import i18n, { SUPPORTED_LANGS, type Lang } from '~/i18n';
+import { SUPPORTED_LANGS, type Lang } from '~/i18n/locales';
 
 export async function loader({ request }: LoaderFunctionArgs) {
     const url = new URL(request.url);
-    const pathname = url.pathname;
     const basePath = env.BASE.replace(/\/+$/, '') || '/';
+    const pathname = url.pathname.replace(/\/+$/, '') || '/';
 
     const isRootPath = pathname === basePath;
     const isLanguagePath = SUPPORTED_LANGS.some(
-        (lang) => pathname === `/${lang}` || pathname.startsWith(`/${lang}/`),
+        (lang) => pathname === `${basePath}/${lang}` || pathname.startsWith(`${basePath}/${lang}/`),
     );
 
     if (isRootPath && !isLanguagePath) {
         let targetLang = i18n.language;
         const cookieLang = request.headers.get('cookie')?.match(/lang=([^;]+)/)?.[1];
         if (cookieLang && SUPPORTED_LANGS.includes(cookieLang as Lang)) targetLang = cookieLang;
-        return redirect(`/${targetLang}`);
+        return redirect(`${basePath}/${targetLang}`);
     }
 
     return {};
@@ -57,7 +58,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
             <head>
                 <meta charSet='utf-8' />
                 <meta name='viewport' content='width=device-width, initial-scale=1' />
-                <link rel='icon' type='image/x-icon' href={`${env.BASE}favicon.ico`} />
+                <link rel='icon' type='image/x-icon' href={env.BASE + 'favicon.ico'} />
                 <Meta />
                 <Links />
                 {SUPPORTED_LANGS.map((lang) => (
@@ -108,8 +109,8 @@ export default function App() {
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
     const { t } = useTranslation();
 
-    let message = 'Oops!';
-    let details = 'An unexpected error occurred.';
+    let message = t('common.error.oops');
+    let details = t('common.error.unexpected');
     let stack: string | undefined;
 
     if (isRouteErrorResponse(error)) {

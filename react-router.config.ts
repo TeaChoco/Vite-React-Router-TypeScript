@@ -6,7 +6,4 @@ export default {
     // Server-side render by default, to enable SPA mode set this to `false`
     ssr: true,
     basename: process.env.VITE_CLIENT_BASE || '/',
-    prerender: ({ getStaticPaths }) => {
-        return getStaticPaths();
-    },
 } satisfies Config;

@@ -1,6 +1,7 @@
 // -Path: 'Vite-React-Router-TypeScript/app/routes/$lang.tsx'
+import i18n from '~/i18n';
 import { redirect } from 'react-router';
-import i18n, { isValidLang } from '~/i18n';
+import { isValidLang } from '~/i18n/locales';
 import { Outlet, useParams } from 'react-router';
 import type { LoaderFunctionArgs } from 'react-router';
 

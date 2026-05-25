@@ -15,7 +15,6 @@ import { SUPPORTED_LANGS } from '~/i18n';
 import env, { isDev } from '~/secure/env';
 import type { Route } from './+types/root';
 import { useTranslation } from 'react-i18next';
-import Providers from './components/layout/Providers';
 import type { LoaderFunctionArgs } from 'react-router';
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -83,7 +82,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 />
             </head>
             <body>
-                <Providers>{children}</Providers>
+                {children}
                 <ScrollRestoration />
                 <Scripts />
             </body>

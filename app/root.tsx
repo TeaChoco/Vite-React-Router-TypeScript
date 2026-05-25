@@ -19,10 +19,10 @@ import { SUPPORTED_LANGS, type Lang } from '~/i18n/locales';
 
 export async function loader({ request }: LoaderFunctionArgs) {
     const url = new URL(request.url);
-    const basePath = env.BASE.replace(/\/+$/, '') || '/';
+    const basePath = env.BASE.replace(/\/+$/, '');
     const pathname = url.pathname.replace(/\/+$/, '') || '/';
 
-    const isRootPath = pathname === basePath;
+    const isRootPath = pathname === (basePath || '/');
     const isLanguagePath = SUPPORTED_LANGS.some(
         (lang) => pathname === `${basePath}/${lang}` || pathname.startsWith(`${basePath}/${lang}/`),
     );
@@ -31,7 +31,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
         let targetLang = i18n.language;
         const cookieLang = request.headers.get('cookie')?.match(/lang=([^;]+)/)?.[1];
         if (cookieLang && SUPPORTED_LANGS.includes(cookieLang as Lang)) targetLang = cookieLang;
-        return redirect(`${basePath}/${targetLang}`);
+        return redirect(`${basePath}/${targetLang}`.replace(/\/+/g, '/'));
     }
 
     return {};
